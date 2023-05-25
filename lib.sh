@@ -177,7 +177,7 @@ function ensure_apt_fast_is_installed {
     alias_sudo_str="#!/bin/bash\nalias sudo='$(get_sudo_prefix)'\nshopt -s expand_aliases"
 
     # Concat the alias sudo string with the apt-fast install script and run them
-    /bin/bash -c "{ echo -e "${alias_sudo_str}" && wget -qO- --tries 5 https://git.io/vokNn }"
+    /bin/bash -c "$(echo -e "${alias_sudo_str}" && wget -qO- --tries 5 https://git.io/vokNn)"
     log "done"
 
   else
