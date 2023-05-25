@@ -178,7 +178,7 @@ function get_download_tool {
   else
     log "Neither curl nor wget found. Installing Curl."
     local sudo_prefix="$(get_sudo_prefix)"
-    ${sudo_prefix} apt-get install curl
+    ${sudo_prefix} apt-get update && ${sudo_prefix} apt-get install curl
     echo "curl -sL"
   fi
 }
