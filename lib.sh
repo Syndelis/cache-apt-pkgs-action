@@ -178,8 +178,8 @@ function get_download_tool {
   else
     # When neither is found, install Curl
     local sudo_prefix="$(get_sudo_prefix)"
-    ${sudo_prefix} apt-get update > /dev/null 2>&1
-    ${sudo_prefix} apt-get install curl > /dev/null 2>&1
+    ${sudo_prefix} apt-get update 1>&2
+    ${sudo_prefix} apt-get install curl 1>&2
     echo "curl -sL"
   fi
 }
