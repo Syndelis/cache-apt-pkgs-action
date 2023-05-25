@@ -172,8 +172,8 @@ function write_manifest {
 function ensure_wget_is_installed {
   log "Installing wget, as apt-fast depends on it..."
   if ! command -v wget > /dev/null 2>&1; then
-    apt-get update
-    apt-get install -y wget
+    sudo apt-get update
+    sudo apt-get install -y wget
     log "done"
   else
     log "wget is already installed"
@@ -189,8 +189,10 @@ function ensure_wget_is_installed {
 ###############################################################################
 function ensure_apt_fast_is_installed {
   log "Installing apt-fast for optimized installs..."
+  ensure_wget_is_installed
+
   if ! command -v apt-fast > /dev/null 2>&1; then
-    /bin/bash -c "$(curl -sL https://git.io/vokNn)"
+    /bin/bash -c "$(wget -Qo- https://git.io/vokNn)"
     log "done"
 
   else
