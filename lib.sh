@@ -165,7 +165,7 @@ function write_manifest {
 
 ###############################################################################
 # Returns either `curl` or `wget` with their respective flags to download a file
-# to stdout.
+# to stdout. If neither are available, install curl.
 # Arguments:
 #   None
 # Returns:
@@ -176,9 +176,10 @@ function get_download_tool {
   elif command -v wget > /dev/null 2>&1; then
     echo "wget -qO- --tries 5"
   else
-    log "Neither curl nor wget found. Installing Curl."
+    # When neither is found, install Curl
     local sudo_prefix="$(get_sudo_prefix)"
-    ${sudo_prefix} apt-get update && ${sudo_prefix} apt-get install curl
+    ${sudo_prefix} apt-get update > /dev/null 2>&1
+    ${sudo_prefix} apt-get install curl > /dev/null 2>&1
     echo "curl -sL"
   fi
 }
