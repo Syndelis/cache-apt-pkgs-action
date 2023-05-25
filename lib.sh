@@ -191,13 +191,7 @@ function ensure_wget_is_installed {
 function ensure_apt_fast_is_installed {
   log "Installing apt-fast for optimized installs..."
   if ! command -v apt-fast > /dev/null 2>&1; then
-    ensure_wget_is_installed
-
-    # Turn sudo into an alias, either for the real sudo or to nothing.
-    alias_sudo_str="#\!/bin/bash\nalias sudo="$(get_sudo_prefix)"\nshopt -s expand_aliases"
-
-    # Concat the alias sudo string with the apt-fast install script and run them
-    /bin/bash -c "$(echo -e "${alias_sudo_str}" && wget -qO- --tries 5 https://git.io/vokNn)"
+    /bin/bash -c "$(curl -sL https://git.io/vokNn)"
     log "done"
 
   else
