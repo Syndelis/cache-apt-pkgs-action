@@ -43,11 +43,13 @@ log_empty_line
 cached_filepaths=$(ls -1 "${cache_dir}"/*.tar | sort)
 cached_filecount=$(echo ${cached_filepaths} | wc -w)
 
+sudo_prefix=$(get_sudo_prefix)
+
 log "Restoring ${cached_filecount} packages from cache..."
 for cached_filepath in ${cached_filepaths}; do
 
   log "- $(basename "${cached_filepath}") restoring..."
-  sudo tar -xf "${cached_filepath}" -C "${cache_restore_root}" > /dev/null
+  ${sudo_prefix} tar -xf "${cached_filepath}" -C "${cache_restore_root}" > /dev/null
   log "  done"
 
   # Execute install scripts if available.    
