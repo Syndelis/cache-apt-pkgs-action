@@ -176,8 +176,10 @@ function get_download_tool {
   elif command -v wget > /dev/null 2>&1; then
     echo "wget -qO- --tries 5"
   else
-    log_err "Neither curl nor wget found. One is required to continue."
-    exit 1
+    log "Neither curl nor wget found. Installing Curl."
+    local sudo_prefix="$(get_sudo_prefix)"
+    ${sudo_prefix} apt-get install curl
+    echo "curl -sL"
   fi
 }
 
