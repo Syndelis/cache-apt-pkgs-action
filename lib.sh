@@ -164,23 +164,20 @@ function write_manifest {
 }
 
 ###############################################################################
-# Returns either `curl` or `wget` with their respective flags to download a file
-# to stdout. If neither are available, install curl.
+# Checks if wget is installed and, if not, installs it. wget is a dependency of
+# apt-fast.
 # Arguments:
 #   None
 # Returns:
-#   Either `curl` or `wget` with their respective flags.
-function get_download_tool {
-  if command -v curl > /dev/null 2>&1; then
-    echo "curl -sL"
-  elif command -v wget > /dev/null 2>&1; then
-    echo "wget -qO- --tries 5"
+#   None
+function ensure_wget_is_installed {
+  log "Installing wget, as apt-fast depends on it..."
+  if ! command -v wget > /dev/null 2>&1; then
+    apt-get update
+    apt-get install -y wget
+    log "done"
   else
-    # When neither is found, install Curl
-    local sudo_prefix="$(get_sudo_prefix)"
-    ${sudo_prefix} apt-get update 1>&2
-    ${sudo_prefix} apt-get install curl -y 1>&2
-    echo "curl -sL"
+    log "wget is already installed"
   fi
 }
 
@@ -194,11 +191,13 @@ function get_download_tool {
 function ensure_apt_fast_is_installed {
   log "Installing apt-fast for optimized installs..."
   if ! command -v apt-fast > /dev/null 2>&1; then
+    ensure_wget_is_installed
+
     # Turn sudo into an alias, either for the real sudo or to nothing.
     alias_sudo_str="#!/bin/bash\nalias sudo='$(get_sudo_prefix)'\nshopt -s expand_aliases"
 
     # Concat the alias sudo string with the apt-fast install script and run them
-    /bin/bash -c "$(echo -e "${alias_sudo_str}" && $(get_download_tool) https://git.io/vokNn)"
+    /bin/bash -c "$(echo -e "${alias_sudo_str}" && wget -qO- --tries 5 https://git.io/vokNn)"
     log "done"
 
   else
