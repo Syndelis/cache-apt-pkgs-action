@@ -164,6 +164,24 @@ function write_manifest {
 }
 
 ###############################################################################
+# Returns either `curl` or `wget` with their respective flags to download a file
+# to stdout.
+# Arguments:
+#   None
+# Returns:
+#   Either `curl` or `wget` with their respective flags.
+function get_download_tool {
+  if command -v curl > /dev/null 2>&1; then
+    echo "curl -sL"
+  elif command -v wget > /dev/null 2>&1; then
+    echo "wget -qO- --tries 5"
+  else
+    log_err "Neither curl nor wget found. One is required to continue."
+    exit 1
+  fi
+}
+
+###############################################################################
 # Checks if apt-fast is installed and, if not, installs it.
 # Arguments:
 #   None
@@ -177,7 +195,7 @@ function ensure_apt_fast_is_installed {
     alias_sudo_str="#!/bin/bash\nalias sudo='$(get_sudo_prefix)'\nshopt -s expand_aliases"
 
     # Concat the alias sudo string with the apt-fast install script and run them
-    /bin/bash -c "$(echo -e "${alias_sudo_str}" && wget -qO- --tries 5 https://git.io/vokNn)"
+    /bin/bash -c "$(echo -e "${alias_sudo_str}" && $(get_download_tool) https://git.io/vokNn)"
     log "done"
 
   else
