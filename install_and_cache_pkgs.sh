@@ -3,6 +3,9 @@
 # Fail on any error.
 set -e
 
+# Expand aliases is required for sudo aliases to work.
+shopt -s expand_aliases
+
 # Debug mode for diagnosing issues.
 # Setup first before other operations.
 debug="${2}"
@@ -49,11 +52,11 @@ manifest_all=""
 
 install_log_filepath="${cache_dir}/install.log"
 
-sudo_prefix=$(get_sudo_prefix)
+alias sudo="$(get_sudo_prefix)"
 
 log "Clean installing ${package_count} packages..."
 # Zero interaction while installing or upgrading the system via apt.
-${sudo_prefix} DEBIAN_FRONTEND=noninteractive apt-fast --yes install ${packages} > "${install_log_filepath}"
+sudo DEBIAN_FRONTEND=noninteractive apt-fast --yes install ${packages} > "${install_log_filepath}"
 log "done"
 log "Installation log written to ${install_log_filepath}"
 
@@ -84,7 +87,7 @@ for installed_package in ${installed_packages}; do
       & get_install_script_filepath "" "${package_name}" "postinst"; } |
       while IFS= read -r f; do test -f "${f}" -o -L "${f}" && get_tar_relpath "${f}"; done |
       xargs -I {} echo \'{}\' | # Single quotes ensure literals like backslash get captured.
-      ${sudo_prefix} xargs tar -cf "${cache_filepath}" -C /
+      sudo xargs tar -cf "${cache_filepath}" -C /
 
     log "    done (compressed size $(du -h "${cache_filepath}" | cut -f1))."
   fi

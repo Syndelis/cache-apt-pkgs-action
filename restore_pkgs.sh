@@ -3,6 +3,9 @@
 # Fail on any error.
 set -e
 
+# Expand aliases is required for sudo aliases to work.
+shopt -s expand_aliases
+
 # Debug mode for diagnosing issues.
 # Setup first before other operations.
 debug="${4}"
@@ -43,13 +46,13 @@ log_empty_line
 cached_filepaths=$(ls -1 "${cache_dir}"/*.tar | sort)
 cached_filecount=$(echo ${cached_filepaths} | wc -w)
 
-sudo_prefix=$(get_sudo_prefix)
+alias sudo="$(get_sudo_prefix)"
 
 log "Restoring ${cached_filecount} packages from cache..."
 for cached_filepath in ${cached_filepaths}; do
 
   log "- $(basename "${cached_filepath}") restoring..."
-  ${sudo_prefix} tar -xf "${cached_filepath}" -C "${cache_restore_root}" > /dev/null
+  sudo tar -xf "${cached_filepath}" -C "${cache_restore_root}" > /dev/null
   log "  done"
 
   # Execute install scripts if available.    

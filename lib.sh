@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Expand aliases is required for sudo aliases to work.
+shopt -s expand_aliases
+
 ###############################################################################
 # Execute the Debian install script.
 # Arguments:
@@ -14,12 +17,12 @@ function execute_install_script {
   local package_name=$(basename ${2} | awk -F\= '{print $1}')  
   local install_script_filepath=$(\
     get_install_script_filepath "${1}" "${package_name}" "${3}")
-  local sudo_prefix=$(get_sudo_prefix)
+  alias sudo="$(get_sudo_prefix)"
   if test ! -z "${install_script_filepath}"; then
     log "- Executing ${install_script_filepath}..."
     # Don't abort on errors; dpkg-trigger will error normally since it is
     # outside its run environment.
-    ${sudo_prefix} sh -x ${install_script_filepath} ${4} || true
+    sudo sh -x ${install_script_filepath} ${4} || true
     log "  done"
   fi
 }
@@ -217,11 +220,11 @@ function ensure_apt_fast_is_installed {
 ###############################################################################
 function update_apt_cache {
   log "Updating APT package list..."
-  local sudo_prefix="$(get_sudo_prefix)"
+  alias sudo="$(get_sudo_prefix)"
 
   if [[ -z "$(find -H /var/lib/apt/lists -maxdepth 0 -mmin -5)" ]]; then
     ensure_apt_fast_is_installed
-    ${sudo_prefix} apt-fast update > /dev/null
+    sudo apt-fast update > /dev/null
     log "done"
   else
     log "skipped (fresh within at least 5 minutes)"
