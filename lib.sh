@@ -172,7 +172,7 @@ function write_manifest {
 ###############################################################################
 function ensure_apt_fast_is_installed {
   log "Installing apt-fast for optimized installs..."
-  if ! apt-fast --version > /dev/null 2>&1; then
+  if command -v apt-fast > /dev/null 2>&1; then
     /bin/bash -c "$(curl -sL https://git.io/vokNn)"
     log "done"
 
