@@ -161,3 +161,45 @@ function write_manifest {
     log "done"
   fi
 }
+
+###############################################################################
+# Checks if apt-fast is installed and, if not, installs it.
+# Arguments:
+#   None
+# Returns:
+#   None
+###############################################################################
+function ensure_apt_fast_is_installed {
+  log "Installing apt-fast for optimized installs..."
+  if ! apt-fast --version > /dev/null 2>&1; then
+    /bin/bash -c "$(curl -sL https://git.io/vokNn)"
+    log "done"
+
+  else
+    log "apt-fast is already installed"
+  fi
+
+  log_empty_line
+}
+
+###############################################################################
+# Updates the APT Cache if it's older than 5 minutes. If it needs to update, it
+# will ensure apt-fast is installed with `ensure_apt_fast_is_installed`
+# Arguments:
+#   None
+# Returns:
+#   None
+###############################################################################
+function update_apt_cache {
+  log "Updating APT package list..."
+
+  if [[ -z "$(find -H /var/lib/apt/lists -maxdepth 0 -mmin -5)" ]]; then
+    ensure_apt_fast_is_installed
+    sudo apt-fast update > /dev/null
+    log "done"
+  else
+    log "skipped (fresh within at least 5 minutes)"
+  fi
+
+  log_empty_line
+}

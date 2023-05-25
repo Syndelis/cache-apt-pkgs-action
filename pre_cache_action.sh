@@ -53,6 +53,8 @@ log "done"
 
 log_empty_line
 
+update_apt_cache
+
 versioned_packages=""
 log "Verifying packages..."
 for package in ${packages}; do  

@@ -40,24 +40,7 @@ write_manifest "main" "${manifest_main}" "${cache_dir}/manifest_main.log"
 
 log_empty_line
 
-if ! apt-fast --version > /dev/null 2>&1; then
-  log "Installing apt-fast for optimized installs..."
-  # Install apt-fast for optimized installs.
-  /bin/bash -c "$(curl -sL https://git.io/vokNn)"
-  log "done"
-
-  log_empty_line
-fi
-
-log "Updating APT package list..."
-if [[ -z "$(find -H /var/lib/apt/lists -maxdepth 0 -mmin -5)" ]]; then
-  sudo apt-fast update > /dev/null
-  log "done"
-else
-  log "skipped (fresh within at least 5 minutes)"
-fi
-
-log_empty_line
+ensure_apt_fast_is_installed
 
 # Strictly contains the requested packages.
 manifest_main=""
