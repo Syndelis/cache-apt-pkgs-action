@@ -172,7 +172,7 @@ function write_manifest {
 ###############################################################################
 function ensure_apt_fast_is_installed {
   log "Installing apt-fast for optimized installs..."
-  if command -v apt-fast > /dev/null 2>&1; then
+  if ! command -v apt-fast > /dev/null 2>&1; then
     # Turn sudo into an alias, either for the real sudo or to nothing.
     alias_sudo_str="#\!/bin/bash\nalias sudo="$(get_sudo_prefix)"\nshopt -s expand_aliases"
 
