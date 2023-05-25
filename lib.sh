@@ -192,7 +192,7 @@ function ensure_apt_fast_is_installed {
   ensure_wget_is_installed
 
   if ! command -v apt-fast > /dev/null 2>&1; then
-    /bin/bash -c "$(wget -Qo- https://git.io/vokNn)"
+    /bin/bash -c "$(wget -qO- https://git.io/vokNn)"
     log "done"
 
   else
