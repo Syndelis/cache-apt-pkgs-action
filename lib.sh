@@ -189,9 +189,9 @@ function ensure_wget_is_installed {
 ###############################################################################
 function ensure_apt_fast_is_installed {
   log "Installing apt-fast for optimized installs..."
-  ensure_wget_is_installed
 
   if ! command -v apt-fast > /dev/null 2>&1; then
+    ensure_wget_is_installed
     /bin/bash -c "$(wget -qO- https://git.io/vokNn)"
     log "done"
 
